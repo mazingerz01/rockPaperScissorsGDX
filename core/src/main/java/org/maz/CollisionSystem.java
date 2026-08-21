@@ -74,30 +74,30 @@ public class CollisionSystem extends EntitySystem implements ContactListener {
                 if (itemA == ROCK) {
                     switch (itemB) {
                         case SCISSORS:
-                            removeB(entityB, contact);
+                            handleB(entityB, contact);
                             break;
                         case PAPER:
-                            removeA(entityA, contact);
+                            handleA(entityA, contact);
                             break;
                     }
                 }
                 else if (itemA == PAPER) {
                     switch (itemB) {
                         case ROCK:
-                            removeB(entityB, contact);
+                            handleB(entityB, contact);
                             break;
                         case SCISSORS:
-                            removeA(entityA, contact);
+                            handleA(entityA, contact);
                             break;
                     }
                 }
                 else if (itemA == SCISSORS) {
                     switch (itemB) {
                         case PAPER:
-                            removeB(entityB, contact);
+                            handleB(entityB, contact);
                             break;
                         case ROCK:
-                            removeA(entityA, contact);
+                            handleA(entityA, contact);
                             break;
                     }
                 }
@@ -105,12 +105,15 @@ public class CollisionSystem extends EntitySystem implements ContactListener {
         }
     }
 
-    private void removeA(Entity entityA, Contact contact) {
+    private void handleA(Entity entityA, Contact contact) {
         GameControl.ashleyEngine.removeEntity(entityA);
         PhysicsSystem.world.destroyBody(contact.getFixtureA().getBody());
+        if (!GameControl.isKillMode()) {
+
+        }
     }
 
-    private void removeB(Entity entityB, Contact contact) {
+    private void handleB(Entity entityB, Contact contact) {
         GameControl.ashleyEngine.removeEntity(entityB);
         PhysicsSystem.world.destroyBody(contact.getFixtureB().getBody());
     }

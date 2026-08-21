@@ -20,6 +20,6 @@ public class ChangeBodyScaleSystem extends IteratingSystem {
         body.destroyFixture(body.getFixtureList().get(0));
 
         // Apply new fixture which was created according to scale.
-        body.createFixture(GameScreen.createFixtureDefForItem(width));
+        body.createFixture(GameControl.createFixtureDefForItem(width));
     }
 }

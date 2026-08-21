@@ -30,10 +30,10 @@ configure(subprojects - project(':android')) {
   apply plugin: 'java-library'
   
   java {
-    sourceCompatibility = 21
-    targetCompatibility = 21
+    sourceCompatibility = 17
+    targetCompatibility = 17
     toolchain {
-      languageVersion = JavaLanguageVersion.of(21)
+      languageVersion = JavaLanguageVersion.of(17)
     }
   }
 

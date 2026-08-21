@@ -1,9 +1,0 @@
-package org.maz;
-
-import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Entity;
-
-public class CollisionComponent implements Component {
-    public boolean isColliding = false;
-    public Entity other;
-}

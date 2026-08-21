@@ -20,10 +20,10 @@ import io.github.fourlastor.construo.Target
 sourceSets.main.resources.srcDirs += [rootProject.file('assets').path]
 application.mainClass = 'org.maz.lwjgl3.Lwjgl3Launcher'
 eclipse.project.name = appName + '-lwjgl3'
-java.sourceCompatibility = 21
-java.targetCompatibility = 21
+java.sourceCompatibility = 17
+java.targetCompatibility = 17
 if(JavaVersion.current().isJava9Compatible()) {
-  compileJava.options.release.set(21)
+  compileJava.options.release.set(17)
 }
 
 dependencies {

@@ -46,7 +46,8 @@ public class UIStage extends Stage {
         buttonContainer.add(createIconButton(GameControl.Item.ROCK)).size(BUTTON_SIZE).row();
         buttonContainer.add(createIconButton(GameControl.Item.PAPER)).size(BUTTON_SIZE).row();
         buttonContainer.add(createIconButton(GameControl.Item.SCISSORS)).size(BUTTON_SIZE).row();
-        buttonContainer.add(createIconButton(GameControl.Item.SCISSORS)).size(BUTTON_SIZE).row();
+        buttonContainer.add(createIconButton(new TextureRegionDrawable(AssetManager.getInstance().getSprite(AssetManager.Sprite.SKULL)),
+            GameControl::toggleKillMode)).size(BUTTON_SIZE).row();
 
         // ButtonContainer-table must be touchable to become fully "hittable" (=be detected as an actor) so enter/exit works
         buttonContainer.setTouchable(Touchable.enabled);

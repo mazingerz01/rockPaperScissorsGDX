@@ -8,7 +8,7 @@ public class RPS extends Game {
     @Override
     public void create() {
         AssetManager.getInstance().load();
-
-        setScreen(new GameScreen());
+        GameControl.init();
+        setScreen(GameScreen.getInstance());
     }
 }

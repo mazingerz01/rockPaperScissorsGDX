@@ -14,6 +14,7 @@ public class AssetManager {
     TextureAtlas.AtlasRegion rock;
     TextureAtlas.AtlasRegion paper;
     TextureAtlas.AtlasRegion scissors;
+    TextureAtlas.AtlasRegion skull;
 
     private AssetManager() {
     }
@@ -23,6 +24,10 @@ public class AssetManager {
             INSTANCE = new AssetManager();
         }
         return INSTANCE;
+    }
+
+    public static enum Sprite {
+        SKULL
     }
 
     void load() {
@@ -37,6 +42,7 @@ public class AssetManager {
         rock = textureAtlas.findRegion("rock");
         scissors = textureAtlas.findRegion("scissors");
         paper = textureAtlas.findRegion("paper");
+        skull = textureAtlas.findRegion("skull");
     }
 
     public TextureAtlas.AtlasRegion getAtlasRegion(GameControl.Item item) {
@@ -44,6 +50,12 @@ public class AssetManager {
             case ROCK -> this.rock;
             case PAPER -> this.paper;
             case SCISSORS -> this.scissors;
+        };
+    }
+
+    public TextureAtlas.AtlasRegion getSprite(Sprite sprite) {
+        return switch (sprite) {
+            case SKULL -> this.skull;
         };
     }
 
