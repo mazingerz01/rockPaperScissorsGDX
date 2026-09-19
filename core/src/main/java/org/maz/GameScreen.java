@@ -108,7 +108,7 @@ public class GameScreen implements Screen {
 
     /** Determine general scale factor according to window size.*/
     private void determineScale() {
-        GameControl.scale = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()) * 0.0007f;
+        GameControl.scale = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()) * 0.0008f;
     }
 
     public SpriteBatch getSpriteBatch() {

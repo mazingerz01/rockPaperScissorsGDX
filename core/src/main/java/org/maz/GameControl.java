@@ -100,7 +100,7 @@ public class GameControl {
         ashleyEngine.addEntity(entity);
     }
 
-    private static Body createBody(float width, Entity entity) {
+    static Body createBody(float width, Entity entity) {
         BodyDef bd = new BodyDef();
         bd.type = BodyDef.BodyType.DynamicBody;
         Body body = PhysicsSystem.world.createBody(bd);

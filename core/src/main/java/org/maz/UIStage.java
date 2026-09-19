@@ -3,6 +3,7 @@ package org.maz;
 import static org.maz.GameControl.getCurrentItem;
 import static org.maz.GameControl.setCurrentItem;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -23,7 +24,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 public class UIStage extends Stage {
     private static final float WIDTH = 800; // Virtual size of the GUI
     private static final float HEIGHT = 400;
-    private static final float BUTTON_SIZE = WIDTH * 0.03f;
+    private final float buttonSize;
     private final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
     private Drawable buttonUp = null;
     private Drawable buttonDown = null;
@@ -32,6 +33,9 @@ public class UIStage extends Stage {
     public UIStage() {
         super(new ExtendViewport(WIDTH, HEIGHT)); //Virtual size of the GUI
 
+        float scaleFactor = (Gdx.app.getType() == Application.ApplicationType.Android) ? 0.06f : 0.035f;
+        buttonSize = WIDTH * scaleFactor;
+
         initButtonBGs();
 
         Table rootTable = new Table();
@@ -39,15 +43,15 @@ public class UIStage extends Stage {
         this.addActor(rootTable);
 
         Table leftPanel = new Table();
-        rootTable.add(leftPanel).width(BUTTON_SIZE).top().left().expand().fill();
+        rootTable.add(leftPanel).width(buttonSize).top().left().expand().fill();
 
-        Table buttonContainer = new Table(); // Primary to keep the cursor as an arrow as log as it hoovers over the buttons.
+        Table buttonContainer = new Table(); // Primary to keep the cursor as an arrow as long as it hoovers over the buttons.
         buttonContainer.defaults().pad(1f);
-        buttonContainer.add(createIconButton(GameControl.Item.ROCK)).size(BUTTON_SIZE).row();
-        buttonContainer.add(createIconButton(GameControl.Item.PAPER)).size(BUTTON_SIZE).row();
-        buttonContainer.add(createIconButton(GameControl.Item.SCISSORS)).size(BUTTON_SIZE).row();
+        buttonContainer.add(createIconButton(GameControl.Item.ROCK)).size(buttonSize).row();
+        buttonContainer.add(createIconButton(GameControl.Item.PAPER)).size(buttonSize).row();
+        buttonContainer.add(createIconButton(GameControl.Item.SCISSORS)).size(buttonSize).row();
         buttonContainer.add(createIconButton(new TextureRegionDrawable(AssetManager.getInstance().getSprite(AssetManager.Sprite.SKULL)),
-            GameControl::toggleKillMode)).size(BUTTON_SIZE).row();
+            GameControl::toggleKillMode)).size(buttonSize).row();
 
         // ButtonContainer-table must be touchable to become fully "hittable" (=be detected as an actor) so enter/exit works
         buttonContainer.setTouchable(Touchable.enabled);
@@ -68,7 +72,7 @@ public class UIStage extends Stage {
             }
         });
 
-        leftPanel.add(buttonContainer).width(BUTTON_SIZE).top().left();
+        leftPanel.add(buttonContainer).width(buttonSize).top().left();
         leftPanel.add().expandY();
     }
 

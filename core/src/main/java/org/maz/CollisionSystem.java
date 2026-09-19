@@ -20,6 +20,8 @@ public class CollisionSystem extends EntitySystem implements ContactListener {
     private final Array<Contact> contacts = new Array<>();
     private final Array<Contact> currentContacts = new Array<>();
     ComponentMapper<ItemComponent> itemComponentMapper = ComponentMapper.getFor(ItemComponent.class);
+    ComponentMapper<TextureComponent> textureComponentMapper = ComponentMapper.getFor(TextureComponent.class);
+    ComponentMapper<Box2DBodyComponent> box2DBodyComponentMapper = ComponentMapper.getFor(Box2DBodyComponent.class);
 
     CollisionSystem() {
         PhysicsSystem.world.setContactListener(this);
@@ -106,16 +108,98 @@ public class CollisionSystem extends EntitySystem implements ContactListener {
     }
 
     private void handleA(Entity entityA, Contact contact) {
-        GameControl.ashleyEngine.removeEntity(entityA);
-        PhysicsSystem.world.destroyBody(contact.getFixtureA().getBody());
-        if (!GameControl.isKillMode()) {
+        // If kill mode is enabled, remove the losing entity as before.
+        if (GameControl.isKillMode()) {
+            GameControl.ashleyEngine.removeEntity(entityA);
+            PhysicsSystem.world.destroyBody(contact.getFixtureA().getBody());
+            return;
+        }
 
+        // In non-kill mode: transform the loser (entityA) into the winner's item instead of removing it.
+        Fixture fixtureB = contact.getFixtureB();
+        if (fixtureB == null || fixtureB.getBody() == null) {
+            return;
+        }
+        Object ud = fixtureB.getBody().getUserData();
+        if (!(ud instanceof Entity winnerEntity)) {
+            return;
+        }
+
+        Item winnerItem = itemComponentMapper.get(winnerEntity) != null
+                          ? itemComponentMapper.get(winnerEntity).item : null;
+        if (winnerItem == null) {
+            return;
+        }
+
+        // Update item component
+        ItemComponent ic = itemComponentMapper.get(entityA);
+        if (ic != null) {
+            ic.item = winnerItem;
+        }
+
+        // Update texture component
+        TextureComponent tc = textureComponentMapper.get(entityA);
+        if (tc != null) {
+            tc.textureRegion = AssetManager.getInstance().getAtlasRegion(winnerItem);
+            tc.originX = tc.textureRegion.getRegionWidth() / 2f;
+            tc.originY = tc.textureRegion.getRegionHeight() / 2f;
+        }
+
+        // Recreate physics body to match new texture size
+        Box2DBodyComponent bc = box2DBodyComponentMapper.get(entityA);
+        if (bc != null && bc.body != null) {
+            // Destroy old body
+            PhysicsSystem.world.destroyBody(bc.body);
+            // Create a new body using the updated texture width
+            float width = tc != null ? tc.textureRegion.getRegionWidth() : 16f;
+            bc.body = GameControl.createBody(width, entityA);
         }
     }
 
     private void handleB(Entity entityB, Contact contact) {
-        GameControl.ashleyEngine.removeEntity(entityB);
-        PhysicsSystem.world.destroyBody(contact.getFixtureB().getBody());
+        // If kill mode is enabled, remove the losing entity as before.
+        if (GameControl.isKillMode()) {
+            GameControl.ashleyEngine.removeEntity(entityB);
+            PhysicsSystem.world.destroyBody(contact.getFixtureB().getBody());
+            return;
+        }
+
+        // Non-kill mode: transform entityB into the winner's item (entityA)
+        Fixture fixtureA = contact.getFixtureA();
+        if (fixtureA == null || fixtureA.getBody() == null) {
+            return;
+        }
+        Object ud = fixtureA.getBody().getUserData();
+        if (!(ud instanceof Entity winnerEntity)) {
+            return;
+        }
+
+        Item winnerItem = itemComponentMapper.get(winnerEntity) != null ? itemComponentMapper.get(winnerEntity).item : null;
+        if (winnerItem == null) {
+            return;
+        }
+
+        // Update item component
+        ItemComponent ic = itemComponentMapper.get(entityB);
+        if (ic != null) {
+            ic.item = winnerItem;
+        }
+
+        // Update texture component
+        TextureComponent tc = textureComponentMapper.get(entityB);
+        if (tc != null) {
+            tc.textureRegion = AssetManager.getInstance().getAtlasRegion(winnerItem);
+            tc.originX = tc.textureRegion.getRegionWidth() / 2f;
+            tc.originY = tc.textureRegion.getRegionHeight() / 2f;
+        }
+
+        // Recreate physics body to match new texture size
+        Box2DBodyComponent bc = box2DBodyComponentMapper.get(entityB);
+        if (bc != null && bc.body != null) {
+            PhysicsSystem.world.destroyBody(bc.body);
+            float width = tc != null ? tc.textureRegion.getRegionWidth() : 16f;
+            bc.body = GameControl.createBody(width, entityB);
+        }
     }
 
 }
