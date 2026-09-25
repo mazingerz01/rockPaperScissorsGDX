@@ -61,15 +61,15 @@ public class GameControl {
     public static void init() {
         ashleyEngine = new Engine();
         ashleyEngine.addSystem(new MoveSystem());
-        ashleyEngine.addSystem(new RenderSystem(GameScreen.getInstance().getSpriteBatch()));
-
-        // Box2D/Physics
-        ashleyEngine.addSystem(new PhysicsSystem());
         ashleyEngine.addSystem(new BodySyncSystem());
+        ashleyEngine.addSystem(new PhysicsSystem());
+        ashleyEngine.addSystem(new CollisionSystem());
+        ashleyEngine.addSystem(new RenderSystem(GameScreen.getInstance().getSpriteBatch()));
+        ashleyEngine.addSystem(new ExplosionSystem());
+
         ChangeBodyScaleSystem changeBodyScaleSystem = new ChangeBodyScaleSystem();
         changeBodyScaleSystem.setProcessing(false); // // Only needed on resizing the window
         ashleyEngine.addSystem(changeBodyScaleSystem);
-        ashleyEngine.addSystem(new CollisionSystem());
 
         GameControl.createEntity(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f, GameControl.Item.ROCK);
 
@@ -106,19 +106,23 @@ public class GameControl {
         Body body = PhysicsSystem.world.createBody(bd);
         ComponentMapper<ItemComponent> componentMapper = ComponentMapper.getFor(ItemComponent.class);
         body.setUserData(componentMapper.get(entity).item);
-        body.createFixture(createFixtureDefForItem(width));
+        addItemFixture(body, width);
         body.setUserData(entity);
         return body;
     }
 
-    static FixtureDef createFixtureDefForItem(float width) {
+    static void addItemFixture(Body body, float width) {
         CircleShape shape = new CircleShape();
         float radius = width / 2 * GameControl.scale;
         shape.setRadius(radius);
         FixtureDef fd = new FixtureDef();
         fd.shape = shape;
-        shape.dispose();
-        return fd;
+        try {
+            body.createFixture(fd);
+        }
+        finally {
+            shape.dispose();
+        }
     }
 
 }

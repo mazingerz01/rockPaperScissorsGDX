@@ -5,6 +5,7 @@ import static org.maz.GameControl.setCurrentItem;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -50,8 +51,18 @@ public class UIStage extends Stage {
         buttonContainer.add(createIconButton(GameControl.Item.ROCK)).size(buttonSize).row();
         buttonContainer.add(createIconButton(GameControl.Item.PAPER)).size(buttonSize).row();
         buttonContainer.add(createIconButton(GameControl.Item.SCISSORS)).size(buttonSize).row();
-        buttonContainer.add(createIconButton(new TextureRegionDrawable(AssetManager.getInstance().getSprite(AssetManager.Sprite.SKULL)),
-            GameControl::toggleKillMode)).size(buttonSize).row();
+        ImageButton skullButton = createIconButton(new TextureRegionDrawable(AssetManager.getInstance().getSprite(AssetManager.Sprite.SKULL)),
+            GameControl::toggleKillMode);
+        // initial color depends on mode
+        skullButton.setColor(GameControl.isKillMode() ? Color.RED : Color.WHITE);
+        // update color after the toggle action runs
+        skullButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                skullButton.setColor(GameControl.isKillMode() ? Color.RED : Color.WHITE);
+            }
+        });
+        buttonContainer.add(skullButton).size(buttonSize).row();
 
         // ButtonContainer-table must be touchable to become fully "hittable" (=be detected as an actor) so enter/exit works
         buttonContainer.setTouchable(Touchable.enabled);
@@ -117,19 +128,19 @@ public class UIStage extends Stage {
 
     private void initButtonBGs() {
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(0.4f, 0.4f, 0.4f, 0.3f);
+        pixmap.setColor(0.4f, 0.4f, 0.4f, 0.4f);
         pixmap.fill();
         buttonUp = new TextureRegionDrawable(new Texture(pixmap));
         pixmap.dispose();
 
         pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(0f, 0f, 0.7f, 0.6f);
+        pixmap.setColor(0f, 0f, 0.7f, 0.7f);
         pixmap.fill();
         buttonDown = new TextureRegionDrawable(new Texture(pixmap));
         pixmap.dispose();
 
         pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(1f, 1f, 1f, 0.3f);
+        pixmap.setColor(1f, 1f, 1f, 0.4f);
         pixmap.fill();
         buttonMouseOver = new TextureRegionDrawable(new Texture(pixmap));
         pixmap.dispose();

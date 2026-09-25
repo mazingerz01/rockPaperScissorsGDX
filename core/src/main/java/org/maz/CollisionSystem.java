@@ -7,11 +7,13 @@ import static org.maz.GameControl.Item.SCISSORS;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.utils.Array;
 import org.maz.GameControl.Item;
 
@@ -71,6 +73,20 @@ public class CollisionSystem extends EntitySystem implements ContactListener {
                 Item itemB = itemComponentMapper.get(entityB) != null ? itemComponentMapper.get(entityB).item : null;
                 if (itemA == null || itemB == null) {
                     continue;
+                }
+
+                WorldManifold worldManifold = contact.getWorldManifold();
+                Vector2[] points = worldManifold.getPoints();
+                int pointCount = worldManifold.getNumberOfContactPoints();
+                if (pointCount > 0) {
+                    float x = 0;
+                    float y = 0;
+                    for (int point = 0; point < pointCount; point++) {
+                        x += points[point].x;
+                        y += points[point].y;
+                    }
+                    GameControl.ashleyEngine.getSystem(ExplosionSystem.class)
+                        .addExplosion(x / pointCount, y / pointCount);
                 }
 
                 if (itemA == ROCK) {

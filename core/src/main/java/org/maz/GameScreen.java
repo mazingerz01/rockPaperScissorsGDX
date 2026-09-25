@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 /** First screen of the application. Displayed after the application is created. */
 public class GameScreen implements Screen {
+    private static final float DEBUG_ITEM_SCALE = 1f;
     private static GameScreen INSTANCE;
     private final SpriteBatch spriteBatch = new SpriteBatch();
     private InputProcessor inputProcessor;
@@ -79,9 +80,11 @@ public class GameScreen implements Screen {
         determineScale();
 
         // We don't need this system processed every time, just once on resizing.
-        GameControl.ashleyEngine.getSystem(ChangeBodyScaleSystem.class).setProcessing(true);
-        GameControl.ashleyEngine.update(0.5f);
-        GameControl.ashleyEngine.getSystem(ChangeBodyScaleSystem.class).setProcessing(false);
+        ChangeBodyScaleSystem changeBodyScaleSystem =
+            GameControl.ashleyEngine.getSystem(ChangeBodyScaleSystem.class);
+        changeBodyScaleSystem.setProcessing(true);
+        changeBodyScaleSystem.update(0f);
+        changeBodyScaleSystem.setProcessing(false);
 
         uiStage.getViewport().update(width, height, true);
     }
@@ -103,12 +106,13 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        // Destroy screen's assets here.
+        GameControl.ashleyEngine.getSystem(ExplosionSystem.class).dispose();
     }
 
     /** Determine general scale factor according to window size.*/
     private void determineScale() {
-        GameControl.scale = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()) * 0.0008f;
+        GameControl.scale = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()) * 0.0008f
+                            * DEBUG_ITEM_SCALE;
     }
 
     public SpriteBatch getSpriteBatch() {

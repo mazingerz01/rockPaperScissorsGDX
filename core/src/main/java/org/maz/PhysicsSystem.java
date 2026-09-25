@@ -8,8 +8,12 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class PhysicsSystem extends EntitySystem {
+    private static final float FIXED_TIME_STEP = 1f / 60f;
+    private static final float MAX_FRAME_TIME = 0.25f;
+
     public static World world;
     private final Box2DDebugRenderer debugRenderer;
+    private float accumulator;
 
     public PhysicsSystem() {
         debugRenderer = new Box2DDebugRenderer();
@@ -20,7 +24,11 @@ public class PhysicsSystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
-        world.step(1 / 30f, 6, 2);
+        accumulator += Math.min(deltaTime, MAX_FRAME_TIME);
+        while (accumulator >= FIXED_TIME_STEP) {
+            world.step(FIXED_TIME_STEP, 6, 2);
+            accumulator -= FIXED_TIME_STEP;
+        }
         debugRenderer.render(world, viewport.getCamera().combined);
         // do normal rendering
     }
