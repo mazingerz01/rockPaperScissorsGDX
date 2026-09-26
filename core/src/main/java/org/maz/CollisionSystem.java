@@ -78,7 +78,7 @@ public class CollisionSystem extends EntitySystem implements ContactListener {
                 WorldManifold worldManifold = contact.getWorldManifold();
                 Vector2[] points = worldManifold.getPoints();
                 int pointCount = worldManifold.getNumberOfContactPoints();
-                if (pointCount > 0) {
+                if (itemA != itemB && pointCount > 0) {
                     float x = 0;
                     float y = 0;
                     for (int point = 0; point < pointCount; point++) {

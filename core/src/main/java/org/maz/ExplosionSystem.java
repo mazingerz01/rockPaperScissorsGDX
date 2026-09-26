@@ -42,7 +42,8 @@ public class ExplosionSystem extends EntitySystem {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         for (Explosion explosion : explosions) {
             float progress = explosion.age / DURATION;
-            float radius = (START_RADIUS + (END_RADIUS - START_RADIUS) * progress) * GameControl.scale;
+            float growthProgress = Math.min(progress * 2f, 1f);
+            float radius = (START_RADIUS + (END_RADIUS - START_RADIUS) * growthProgress) * GameControl.scale;
             float alpha = MAX_ALPHA * (1f - progress);
             shapeRenderer.setColor(1f, 0f, 0f, alpha);
             shapeRenderer.circle(explosion.x, explosion.y, radius, 24);

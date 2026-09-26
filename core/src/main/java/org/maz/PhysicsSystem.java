@@ -1,10 +1,7 @@
 package org.maz;
 
-import static org.maz.GameControl.viewport;
-
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class PhysicsSystem extends EntitySystem {
@@ -12,13 +9,9 @@ public class PhysicsSystem extends EntitySystem {
     private static final float MAX_FRAME_TIME = 0.25f;
 
     public static World world;
-    private final Box2DDebugRenderer debugRenderer;
     private float accumulator;
 
     public PhysicsSystem() {
-        debugRenderer = new Box2DDebugRenderer();
-        debugRenderer.setDrawBodies(true);
-
         world = new World(new Vector2(0, 0), true);
     }
 
@@ -29,8 +22,6 @@ public class PhysicsSystem extends EntitySystem {
             world.step(FIXED_TIME_STEP, 6, 2);
             accumulator -= FIXED_TIME_STEP;
         }
-        debugRenderer.render(world, viewport.getCamera().combined);
-        // do normal rendering
     }
 
 }
