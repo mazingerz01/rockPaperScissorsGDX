@@ -4,6 +4,7 @@ import static org.maz.GameControl.ashleyEngine;
 import static org.maz.GameControl.getCurrentItem;
 import static org.maz.GameControl.viewport;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
@@ -46,7 +47,7 @@ public class GameScreen implements Screen {
         inputMultiplexer.addProcessor(inputProcessor);
         Gdx.input.setInputProcessor(inputMultiplexer);
 
-        determineScale();
+        determineBaseScale();
 
         Gdx.graphics.setCursor(AssetManager.getInstance().getCursor(getCurrentItem()));
     }
@@ -77,7 +78,7 @@ public class GameScreen implements Screen {
         viewport.update(width, height, true);
         spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
 
-        determineScale();
+        determineBaseScale();
 
         // We don't need this system processed every time, just once on resizing.
         ChangeBodyScaleSystem changeBodyScaleSystem =
@@ -112,11 +113,14 @@ public class GameScreen implements Screen {
         }
     }
 
-    /** Determine general scale factor according to window size.*/
-    private void determineScale() {
-        GameControl.scale = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight())
-                            * 0.0017f;
-        //* DEBUG_ITEM_SCALE;
+    /** Determine general/basic scale factor according to window size.*/
+    private void determineBaseScale() {
+        float scale = 0.0017f;
+        if (Gdx.app.getType() == Application.ApplicationType.Desktop
+            || Gdx.app.getType() == Application.ApplicationType.WebGL) {
+            scale = 0.001f;
+        }
+        GameControl.baseScale = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()) * scale;
     }
 
     public SpriteBatch getSpriteBatch() {

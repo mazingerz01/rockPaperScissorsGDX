@@ -19,7 +19,8 @@ public class GameControl {
     public static final float PPM = 100f; // pixels per meter (to convert between box2d-meters and pixels)
 
     /** Scale factor to scale textures, body-fixtures, etc. according to (resized) window size. */
-    public static float scale = 1f;
+    public static float baseScale = 1f;
+    public static float itemScaleMultiplier = 1f;
     private static int itemIndex = 0;
     private static boolean killMode = false;
 
@@ -113,7 +114,7 @@ public class GameControl {
 
     static void addItemFixture(Body body, float width) {
         CircleShape shape = new CircleShape();
-        float radius = width / 2 * GameControl.scale;
+        float radius = width / 2 * GameControl.baseScale * GameControl.itemScaleMultiplier;
         shape.setRadius(radius);
         FixtureDef fd = new FixtureDef();
         fd.shape = shape;

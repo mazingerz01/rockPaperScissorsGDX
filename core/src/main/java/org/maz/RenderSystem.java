@@ -38,7 +38,8 @@ public class RenderSystem extends IteratingSystem {
         batch.begin();
         batch.draw(texture.textureRegion, body.getPosition().x - texture.originX, body.getPosition().y - texture.originY,
             texture.originX, texture.originY, textureWidth, textureHeight,
-            GameControl.scale, GameControl.scale, rotationComponent.angle);
+            GameControl.baseScale * GameControl.itemScaleMultiplier,
+            GameControl.baseScale * GameControl.itemScaleMultiplier, rotationComponent.angle);
         batch.end();
     }
 

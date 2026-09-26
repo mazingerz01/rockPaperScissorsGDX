@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class ExplosionSystem extends EntitySystem {
 
-    private static final float DURATION = 2f;
+    private static final float DURATION = 1f;
     private static final float START_RADIUS = 4f;
     private static final float END_RADIUS = 32f;
     private static final float MAX_ALPHA = 0.5f;
@@ -43,7 +43,7 @@ public class ExplosionSystem extends EntitySystem {
         for (Explosion explosion : explosions) {
             float progress = explosion.age / DURATION;
             float growthProgress = Math.min(progress * 2f, 1f);
-            float radius = (START_RADIUS + (END_RADIUS - START_RADIUS) * growthProgress) * GameControl.scale;
+            float radius = (START_RADIUS + (END_RADIUS - START_RADIUS) * growthProgress) * GameControl.baseScale;
             float alpha = MAX_ALPHA * (1f - progress);
             shapeRenderer.setColor(1f, 0f, 0f, alpha);
             shapeRenderer.circle(explosion.x, explosion.y, radius, 24);
