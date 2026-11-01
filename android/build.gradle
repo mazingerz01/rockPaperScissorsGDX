@@ -66,7 +66,7 @@ android {
       // Use signing config when keystore.properties is provided in android/
       signingConfig signingConfigs.release
       minifyEnabled true
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
     }
   }
 }

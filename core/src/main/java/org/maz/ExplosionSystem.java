@@ -12,7 +12,7 @@ public class ExplosionSystem extends EntitySystem {
     private static final float DURATION = 1f;
     private static final float START_RADIUS = 4f;
     private static final float END_RADIUS = 32f;
-    private static final float MAX_ALPHA = 0.5f;
+    private static final float MAX_ALPHA = 0.25f;
 
     private final Array<Explosion> explosions = new Array<>();
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -45,7 +45,7 @@ public class ExplosionSystem extends EntitySystem {
             float growthProgress = Math.min(progress * 2f, 1f);
             float radius = (START_RADIUS + (END_RADIUS - START_RADIUS) * growthProgress) * GameControl.baseScale;
             float alpha = MAX_ALPHA * (1f - progress);
-            shapeRenderer.setColor(1f, 0f, 0f, alpha);
+            shapeRenderer.setColor(1f, 0.5f, 0f, alpha);
             shapeRenderer.circle(explosion.x, explosion.y, radius, 24);
         }
         shapeRenderer.end();

@@ -3,6 +3,8 @@ package org.maz;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -58,6 +60,22 @@ public class GameControl {
     }
 
     public static boolean isKillMode() {return killMode;}
+
+    public static void clearItems() {
+        ImmutableArray<Entity> entities = ashleyEngine.getEntitiesFor(
+            Family.all(ItemComponent.class, Box2DBodyComponent.class).get());
+        ComponentMapper<Box2DBodyComponent> bodyMapper =
+            ComponentMapper.getFor(Box2DBodyComponent.class);
+
+        for (int i = entities.size() - 1; i >= 0; i--) {
+            Entity entity = entities.get(i);
+            Body body = bodyMapper.get(entity).body;
+            ashleyEngine.removeEntity(entity);
+            if (body != null) {
+                PhysicsSystem.world.destroyBody(body);
+            }
+        }
+    }
 
     public static void init() {
         ashleyEngine = new Engine();

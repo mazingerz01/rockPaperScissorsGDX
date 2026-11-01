@@ -25,11 +25,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 public class UIStage extends Stage {
@@ -38,6 +40,7 @@ public class UIStage extends Stage {
     private final float buttonSize;
     private final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
     private final FractionBar[] itemBars = new FractionBar[GameControl.Item.values().length];
+    private final Label[] itemCountLabels = new Label[GameControl.Item.values().length];
     private final ComponentMapper<ItemComponent> itemMapper = ComponentMapper.getFor(ItemComponent.class);
     private final ImmutableArray<Entity> items =
         GameControl.ashleyEngine.getEntitiesFor(Family.all(ItemComponent.class).get());
@@ -48,6 +51,7 @@ public class UIStage extends Stage {
     private final Texture settingsDialogBackgroundTexture;
     private final Color barColor = new Color(0f, 0.55f, 0.55f, 0.8f);
     private Table settingsDialog;
+    private Cursor cursorBeforeSettings;
     private Drawable buttonUp = null;
     private Drawable buttonDown = null;
     private Drawable buttonMouseOver = null;
@@ -341,6 +345,12 @@ public class UIStage extends Stage {
             new TextureRegionDrawable(new TextureRegion(settingsGearTexture)));
         addCursorListeners(flashButton);
         addCursorListeners(settingsButton);
+        flashButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                GameControl.clearItems();
+            }
+        });
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -350,8 +360,8 @@ public class UIStage extends Stage {
 
         Table settingsTable = new Table();
         settingsTable.setFillParent(true);
-        settingsTable.bottom().left().pad(12f);
-        settingsTable.add(flashButton).size(buttonSize).row();
+        settingsTable.bottom().left();
+        settingsTable.add(flashButton).size(buttonSize).padBottom(2f).row();
         settingsTable.add(settingsButton).size(buttonSize);
         addActor(settingsTable);
     }
@@ -383,6 +393,22 @@ public class UIStage extends Stage {
         settingsDialog.setTouchable(Touchable.enabled);
         settingsDialog.top().center();
         settingsDialog.setBackground(new TextureRegionDrawable(new TextureRegion(settingsDialogBackgroundTexture)));
+        cursorBeforeSettings = AssetManager.getInstance().getCursor(getCurrentItem());
+        settingsDialog.addListener(new InputListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (fromActor == null) {
+                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+                }
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                if (toActor == null && cursorBeforeSettings != null) {
+                    Gdx.graphics.setCursor(cursorBeforeSettings);
+                }
+            }
+        });
 
         Label title = new Label("Settings", skin);
         title.setColor(barColor);
@@ -437,7 +463,7 @@ public class UIStage extends Stage {
 
     private void addItemBars() {
         TextureRegionDrawable barBase = new TextureRegionDrawable(new TextureRegion(barTexture));
-        Color cyan = new Color(0f, 0.55f, 0.55f, 0.8f);
+        Color cyan = new Color(0f, 0.55f, 0.55f, 0.7f);
 
         Table barsTable = new Table();
         barsTable.setFillParent(true);
@@ -446,8 +472,17 @@ public class UIStage extends Stage {
             FractionBar bar = new FractionBar(barBase.tint(cyan));
             itemBars[item.ordinal()] = bar;
 
+            Label countLabel = new Label("0", skin);
+            countLabel.setFontScale(0.7f);
+            countLabel.setAlignment(Align.right);
+            itemCountLabels[item.ordinal()] = countLabel;
+
+            Stack barWithCount = new Stack();
+            barWithCount.add(bar);
+            barWithCount.add(countLabel);
+
             Image icon = new Image(new TextureRegionDrawable(AssetManager.getInstance().getAtlasRegion(item)));
-            barsTable.add(bar).width(135f).height(9f).padRight(6f).padBottom(5f);
+            barsTable.add(barWithCount).width(135f).height(18f).padRight(6f).padBottom(5f);
             barsTable.add(icon).size(21.12f).padBottom(2f).row();
         }
         addActor(barsTable);
@@ -464,6 +499,7 @@ public class UIStage extends Stage {
 
         for (int i = 0; i < itemBars.length; i++) {
             itemBars[i].setFraction(total == 0 ? 0f : counts[i] / (float) total);
+            itemCountLabels[i].setText(Integer.toString(counts[i]));
         }
     }
 
